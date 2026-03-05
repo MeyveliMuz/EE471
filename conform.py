@@ -1,4 +1,4 @@
-#this script written by senior dev: Huseyin Cengizout
+#this script written by senior dev Huseyin Cengizout
 #Programming for the Puzzled -- Srini Devadas
 #You Will All Conform
 #Input is a vector of F's and B's, in terms of forwards and backwards caps
