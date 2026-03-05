@@ -1,4 +1,4 @@
-#this script written by  Huseyin Cengizout
+#this script written by Huseyin Cengizout
 #Programming for the Puzzled -- Srini Devadas
 #You Will All Conform
 #Input is a vector of F's and B's, in terms of forwards and backwards caps
@@ -50,3 +50,12 @@ def pleaseConform(caps):
             
 pleaseConform(caps)
 ##pleaseConform(cap2)
+
+def pleaseConformOnepass(caps):
+    caps = caps + [caps[0]]
+    for i in range(1, len(caps)):
+        if caps[i] != caps[i-1]:
+            if caps[i] != caps[0]:
+                print('People in positions', i, end='')
+            else:
+                print(' through', i-1, 'flip your caps!')
