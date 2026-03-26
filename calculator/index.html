@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hesap Makinesi</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .calculator {
+            background-color: #1279c6;
+            /* Görseldeki mavi renk */
+            padding: 10px;
+            width: 260px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .display {
+            background-color: white;
+            color: black;
+            font-size: 38px;
+            text-align: right;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 8px;
+            /* Butonlar arasındaki mavi boşluklar için gap */
+        }
+
+        .btn {
+            background-color: #7d7d7d;
+            /* Görseldeki gri renk */
+            color: white;
+            border: none;
+            font-size: 26px;
+            font-weight: bold;
+            height: 55px;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            transition: background-color 0.1s;
+        }
+
+        .btn:hover {
+            background-color: #8c8c8c;
+        }
+
+        .btn:active {
+            filter: brightness(0.8);
+        }
+
+        .btn.equal {
+            background-color: #004d99;
+            /* Görseldeki koyu mavi eşittir butonu */
+        }
+
+        .btn.equal:hover {
+            background-color: #005eb8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="btn" onclick="appendNumber('7')">7</button>
+            <button class="btn" onclick="appendNumber('8')">8</button>
+            <button class="btn" onclick="appendNumber('9')">9</button>
+            <button class="btn" onclick="setOperator('/')">&divide;</button>
+
+            <button class="btn" onclick="appendNumber('4')">4</button>
+            <button class="btn" onclick="appendNumber('5')">5</button>
+            <button class="btn" onclick="appendNumber('6')">6</button>
+            <button class="btn" onclick="setOperator('*')">&times;</button>
+
+            <button class="btn" onclick="appendNumber('1')">1</button>
+            <button class="btn" onclick="appendNumber('2')">2</button>
+            <button class="btn" onclick="appendNumber('3')">3</button>
+            <button class="btn" onclick="setOperator('-')">-</button>
+
+            <button class="btn" onclick="appendNumber('0')">0</button>
+            <button class="btn" onclick="appendDot()">.</button>
+            <button class="btn equal" onclick="calculate()">=</button>
+            <button class="btn" onclick="setOperator('+')">+</button>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = '0';
+        let previousInput = '';
+        let operator = null;
+        let waitingForNextInput = false;
+
+        const display = document.getElementById('display');
+
+        function updateDisplay() {
+            display.innerText = currentInput;
+        }
+
+        function appendNumber(num) {
+            if (currentInput === '0' || waitingForNextInput) {
+                currentInput = num;
+                waitingForNextInput = false;
+            } else {
+                if (currentInput.length < 12) {
+                    currentInput += num;
+                }
+            }
+            updateDisplay();
+        }
+
+        function appendDot() {
+            if (waitingForNextInput) {
+                currentInput = '0.';
+                waitingForNextInput = false;
+            } else if (!currentInput.includes('.')) {
+                currentInput += '.';
+            }
+            updateDisplay();
+        }
+
+        function setOperator(op) {
+            if (operator && !waitingForNextInput) {
+                calculate();
+            }
+            previousInput = currentInput;
+            operator = op;
+            waitingForNextInput = true;
+        }
+
+        function calculate() {
+            if (!operator || waitingForNextInput) return;
+
+            let a = parseFloat(previousInput);
+            let b = parseFloat(currentInput);
+            let result = 0;
+
+            switch (operator) {
+                case '+': result = a + b; break;
+                case '-': result = a - b; break;
+                case '*': result = a * b; break;
+                case '/':
+                    if (b === 0) {
+                        currentInput = "Error";
+                        operator = null;
+                        updateDisplay();
+                        waitingForNextInput = true;
+                        return;
+                    }
+                    result = a / b;
+                    break;
+            }
+
+            // Yuvarlama hatalarını önlemek için (örn. 0.1 + 0.2)
+            result = Math.round(result * 1000000000) / 1000000000;
+            currentInput = result.toString();
+            operator = null;
+            waitingForNextInput = true;
+            updateDisplay();
+        }
+
+        // Görselde silme tuşu yok ancak klavyeden kullanılabilmesi için gizli temizleme tuşu (Esc, Backspace) ekliyoruz.
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= '0' && e.key <= '9') appendNumber(e.key);
+            if (e.key === '.') appendDot();
+            if (e.key === 'Enter' || e.key === '=') calculate();
+            if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
+                e.preventDefault();
+                setOperator(e.key);
+            }
+            if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'Delete') {
+                currentInput = '0';
+                previousInput = '';
+                operator = null;
+                waitingForNextInput = false;
+                updateDisplay();
+            }
+        });
+    </script>
+</body>
+
+</html>
