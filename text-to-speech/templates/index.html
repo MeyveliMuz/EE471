@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech Translator</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dark-mode">
+    <button id="theme-toggle" class="theme-btn">
+        <i class="fas fa-sun" id="theme-icon"></i>
+    </button>
+    
+    <div class="glass-container">
+        <h1>Text-to-Speech Explorer</h1>
+        <p class="subtitle">Convert your text to natural-sounding speech instantly.</p>
+        
+        <div class="input-group">
+            <select id="voice-select" class="modern-select">
+                <option value="female_neutral">Kadın (Standart)</option>
+                <option value="male_neutral">Erkek (Standart)</option>
+                <option value="female_excited">Kadın (Heyecanlı)</option>
+                <option value="male_excited">Erkek (Heyecanlı)</option>
+                <option value="male_mature">Erkek (Olgun)</option>
+            </select>
+            <textarea id="text-input" placeholder="Type or paste your text here to convert into speech..." rows="6"></textarea>
+            <button id="synthesize-btn" class="primary-btn">
+                <span id="btn-text">Generate Speech</span>
+                <i class="fas fa-magic icon-right"></i>
+                <div class="spinner" id="spinner" style="display: none;"></div>
+            </button>
+        </div>
+        
+        <div class="error-box" id="error-box" style="display: none;"></div>
+        
+        <div class="output-group" id="output-group" style="display: none;">
+            <div class="audio-player">
+                <audio id="audio-out" controls></audio>
+            </div>
+            <a id="download-btn" class="download-link" download="synthesized_speech.wav">
+                <i class="fas fa-download"></i> Download Audio
+            </a>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
