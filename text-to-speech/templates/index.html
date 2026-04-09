@@ -3,48 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text to Speech Translator</title>
+    <title>Azure Speech Unified Explorer</title>
     <link rel="stylesheet" href="/static/css/style.css">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="dark-mode">
-    <button id="theme-toggle" class="theme-btn">
-        <i class="fas fa-sun" id="theme-icon"></i>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+        <i class="fas fa-sun"></i>
     </button>
-    
+
     <div class="glass-container">
-        <h1>Text-to-Speech Explorer</h1>
-        <p class="subtitle">Convert your text to natural-sounding speech instantly.</p>
-        
-        <div class="input-group">
-            <select id="voice-select" class="modern-select">
-                <option value="female_neutral">Kadın (Standart)</option>
-                <option value="male_neutral">Erkek (Standart)</option>
-                <option value="female_excited">Kadın (Heyecanlı)</option>
-                <option value="male_excited">Erkek (Heyecanlı)</option>
-                <option value="male_mature">Erkek (Olgun)</option>
-            </select>
-            <textarea id="text-input" placeholder="Type or paste your text here to convert into speech..." rows="6"></textarea>
-            <button id="synthesize-btn" class="primary-btn">
-                <span id="btn-text">Generate Speech</span>
-                <i class="fas fa-magic icon-right"></i>
-                <div class="spinner" id="spinner" style="display: none;"></div>
-            </button>
+        <h1>Azure Speech Studio</h1>
+        <p class="subtitle">Unified Text-to-Speech & Speech-to-Text Workspace</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-target="tts-panel"><i class="fas fa-volume-up"></i> Text to Speech</button>
+            <button class="tab-btn" data-target="stt-panel"><i class="fas fa-microphone-alt"></i> Speech to Text</button>
         </div>
-        
-        <div class="error-box" id="error-box" style="display: none;"></div>
-        
-        <div class="output-group" id="output-group" style="display: none;">
-            <div class="audio-player">
-                <audio id="audio-out" controls></audio>
+
+        <!-- TTS PANEL -->
+        <div id="tts-panel" class="panel active">
+            <div class="input-group">
+                <select id="voice-select" class="modern-select">
+                    <option value="female_auto">Kadın (Otomatik Türkçe/İngilizce - Multilingual)</option>
+                    <option value="male_auto">Erkek (Otomatik Türkçe/İngilizce - Multilingual)</option>
+                    <option value="female_excited">Kadın (Sadece İngilizce - Heyecanlı)</option>
+                    <option value="male_excited">Erkek (Sadece İngilizce - Heyecanlı)</option>
+                </select>
+                <textarea id="text-input" placeholder="Type or paste your text here..." rows="6"></textarea>
+                <button id="synthesize-btn" class="primary-btn">
+                    <span id="btn-text">Generate Speech</span>
+                </button>
             </div>
-            <a id="download-btn" class="download-link" download="synthesized_speech.wav">
-                <i class="fas fa-download"></i> Download Audio
-            </a>
+            
+            <div class="status-indicator tts-status" style="display: none;">
+                <div class="spinner"></div> <span>Processing...</span>
+            </div>
+            
+            <div class="error-box tts-error" style="display: none;"></div>
+            
+            <div class="output-group tts-output" style="display: none;">
+                <h3>Result:</h3>
+                <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+                    <audio id="audio-out" controls></audio>
+                    <a id="download-btn" class="primary-btn" download="synthesized_speech.mp3" style="font-size:1rem; padding: 10px 20px;">
+                        <i class="fas fa-download"></i> Download MP3
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- STT PANEL -->
+        <div id="stt-panel" class="panel">
+            <div class="controls-panel">
+                <div class="input-section">
+                    <label>Language:</label>
+                    <select id="lang-select" class="modern-select">
+                        <option value="auto">Otomatik Algıla (En iyi sonuç)</option>
+                        <option value="tr-TR">Türkçe (Turkish)</option>
+                        <option value="en-US">English (US)</option>
+                    </select>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="record-btn" class="primary-btn record-btn">
+                        <i class="fas fa-microphone"></i> <span id="record-text">Start Recording</span>
+                    </button>
+                    <div class="divider">- VEYA -</div>
+                    <label for="file-upload" class="primary-btn upload-btn">
+                        <i class="fas fa-upload"></i> Upload Audio (.mp3, .wav vb)
+                    </label>
+                    <input id="file-upload" type="file" accept="audio/*" style="display: none;">
+                </div>
+            </div>
+
+            <div class="status-indicator stt-status" style="display: none;">
+                <div class="spinner"></div> <span id="stt-status-text">Processing audio...</span>
+            </div>
+            
+            <div class="error-box stt-error" style="display: none;"></div>
+            
+            <div class="result-group stt-result" style="display: none;">
+                <h3>Transcription:</h3>
+                <div class="transcript-box" id="transcript-box"></div>
+            </div>
         </div>
     </div>
-
+    
     <script src="/static/js/main.js"></script>
 </body>
 </html>
