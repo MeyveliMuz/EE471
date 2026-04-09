@@ -1,0 +1,14 @@
+services:
+  cog-api:
+    image: cat-api
+    ports:
+      - "5001:5000"
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - API_URL=http://cog-api:5000/predictions
+    depends_on:
+      - cog-api

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Kedi Sınıflandırıcı</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 300px;
+            margin: auto;
+            border-radius: 10px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Kedi Türü Sınıflandırıcı</h2>
+        <input type="file" id="imageInput" accept="image/*">
+        <br>
+        <button onclick="classifyCat()">Sınıflandır</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        async function classifyCat() {
+            const fileInput = document.getElementById('imageInput');
+            const resultText = document.getElementById('result');
+
+            if (fileInput.files.length === 0) {
+                resultText.innerText = "Lütfen önce bir fotoğraf seçin.";
+                return;
+            }
+
+            resultText.innerText = "Analiz ediliyor...";
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.readAsDataURL(file);
+            reader.onload = async function () {
+                const base64Image = reader.result;
+
+                try {
+                    const response = await fetch('/predictions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ input: { image: base64Image } })
+                    });
+
+                    const data = await response.json();
+                    resultText.innerText = "Sonuç: " + data.output;
+                } catch (error) {
+                    console.error("Detaylı Hata:", error);
+                    resultText.innerText = "Bağlantı hatası: " + error.message;
+                }
+            };
+        }
+    </script>
+</body>
+
+</html>
